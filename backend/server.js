@@ -1,4 +1,4 @@
-import { NODE_ENV, PORT, MONGO_URI } from "./config/env.js";
+import { NODE_ENV, PORT, MONGO_URI, CLIENT_URL } from "./config/env.js";
 import http from "http";
 import { Server } from "socket.io";
 import express from "express";
@@ -31,7 +31,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: CLIENT_URL,
     credentials: true,
   })
 );
@@ -66,7 +66,7 @@ app.use(errorHandler);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: CLIENT_URL,
     credentials: true,
   },
 });
