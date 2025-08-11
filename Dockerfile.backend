@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY backend ./backend
+COPY src/data/deliveryOptions.js ./src/data/deliveryOptions.js
+COPY src/utilities/Money.js  ./src/utilities/Money.js
+
+ENV NODE_ENV=development
+EXPOSE 5000
+
+CMD ["nodemon", "backend/server.js"]

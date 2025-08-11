@@ -1,0 +1,15 @@
+services:
+  amazon-production:
+    image: amazon-react-prod
+    container_name: amazon-react-container-prod
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      CLIENT_URL: http://localhost:5000
+    restart: unless-stopped

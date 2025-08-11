@@ -1,0 +1,29 @@
+FROM node:18-alpine AS frontend-build
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+COPY vite.config.js ./
+COPY index.html ./              
+COPY public ./public
+COPY src ./src
+
+RUN npm install
+RUN npm run build
+
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY backend ./backend
+COPY src/data/deliveryOptions.js ./src/data/deliveryOptions.js
+COPY src/utilities/Money.js  ./src/utilities/Money.js
+COPY package.json package-lock.json* ./
+COPY public ./public
+
+RUN npm install --production
+
+COPY --from=frontend-build /app/dist ./dist
+
+EXPOSE 5000
+
+CMD ["node", "backend/server.js"]

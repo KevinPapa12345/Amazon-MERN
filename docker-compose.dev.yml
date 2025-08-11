@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  backend:
+    image: amazon-backend-dev
+    container_name: amazon-backend-container-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev:server
+
+  frontend:
+    image: amazon-frontend-dev
+    container_name: amazon-frontend-container-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - VITE_API_PROXY_TARGET=http://amazon-backend-container-dev:5000
+    command: npm run dev:client
