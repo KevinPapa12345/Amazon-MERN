@@ -35,9 +35,12 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (!user.username) return;
 
-    const newSocket = io("http://localhost:5000", {
-      withCredentials: true,
-    });
+    const newSocket = io(
+      import.meta.env.VITE_BACKEND_URL || "http://localhost:5000",
+      {
+        withCredentials: true,
+      }
+    );
     socketRef.current = newSocket;
 
     newSocket.on("productDeletedFromCart", async (payload) => {
