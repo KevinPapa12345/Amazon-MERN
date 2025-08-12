@@ -10,6 +10,12 @@ const Sidebar = ({ selectedFilters, onFilterChange }) => {
 
   const handleCheckboxChange = (group, value) => {
     onFilterChange(group, value);
+    scrollTo(0, 0);
+  };
+
+  const handleSelectChange = (e) => {
+    onFilterChange("sort", e.target.value);
+    scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -25,11 +31,13 @@ const Sidebar = ({ selectedFilters, onFilterChange }) => {
     if (!isNaN(min) && !isNaN(max) && min <= max) {
       onFilterChange("price", { min, max });
     }
+    scrollTo(0, 0);
   };
 
   const handleResetFilters = () => {
     setPriceInput({ min: "", max: "" });
     onFilterChange("reset");
+    scrollTo(0, 0);
   };
 
   return (
@@ -78,7 +86,7 @@ const Sidebar = ({ selectedFilters, onFilterChange }) => {
       <select
         style={{ display: "block" }}
         value={selectedFilters.sort}
-        onChange={(e) => onFilterChange("sort", e.target.value)}
+        onChange={(e) => handleSelectChange(e)}
       >
         <option value="newest">Newest First</option>
         <option value="oldest">Oldest First</option>
