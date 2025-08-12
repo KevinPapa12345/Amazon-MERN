@@ -4,7 +4,7 @@ import Product from "../models/Product.js";
 import User from "../models/User.js";
 import VerificationCode from "../models/VerificationCode.js";
 import { deleteCloudinaryFolder } from "../utility/cloudinaryUtils.js";
-import { sendEmail } from "../utility/sendEmail.js";
+import { sendEmail } from "../config/sendEmail.js";
 
 export const uploadUserIcon = async (req, res) => {
   try {

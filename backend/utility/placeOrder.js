@@ -6,7 +6,7 @@ import {
   calculateDeliveryDate,
   getDeliveryOption,
 } from "../../src/data/deliveryOptions.js";
-import { sendEmail } from "./sendEmail.js";
+import { sendEmail } from "../config/sendEmail.js";
 import { generateOrderConfirmationEmail } from "./generateOrderConfirmationEmail.js";
 
 export const placeOrderForUser = async (userId) => {
@@ -16,7 +16,6 @@ export const placeOrderForUser = async (userId) => {
   }
 
   const cartItems = await CartItem.find({ user: userId }).populate("product");
-  console.log(cartItems);
 
   if (cartItems.length === 0) {
     throw new Error("Cart is empty");

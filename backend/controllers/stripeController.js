@@ -1,4 +1,4 @@
-import stripe from "../utility/stripeClient.js";
+import stripe from "../config/stripeClient.js";
 import { CLIENT_URL } from "../config/env.js";
 import CartItem from "../models/CartItem.js";
 import { getTotalShipping } from "../utility/totalPriceCents.js";

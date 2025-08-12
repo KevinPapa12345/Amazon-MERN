@@ -1,4 +1,4 @@
-import stripe from "../utility/stripeClient.js";
+import stripe from "../config/stripeClient.js";
 import { STRIPE_WEBHOOK_SECRET } from "../config/env.js";
 import { placeOrderForUser } from "../utility/placeOrder.js";
 
