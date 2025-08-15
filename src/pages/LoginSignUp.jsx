@@ -89,7 +89,6 @@ export const LoginSignUp = () => {
           return;
         }
         const res = await API.post("/auth/update-password", {
-          email,
           verificationCode,
           newPassword,
         });

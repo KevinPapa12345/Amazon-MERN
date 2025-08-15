@@ -8,6 +8,7 @@ RUN npm install
 COPY backend ./backend
 COPY src/data/deliveryOptions.js ./src/data/deliveryOptions.js
 COPY src/utilities/Money.js  ./src/utilities/Money.js
+COPY src/utilities/ValidateInputs.js  ./src/utilities/ValidateInputs.js
 
 ENV NODE_ENV=development
 EXPOSE 5000

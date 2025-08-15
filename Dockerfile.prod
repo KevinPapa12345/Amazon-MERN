@@ -17,6 +17,7 @@ WORKDIR /app
 COPY backend ./backend
 COPY src/data/deliveryOptions.js ./src/data/deliveryOptions.js
 COPY src/utilities/Money.js  ./src/utilities/Money.js
+COPY src/utilities/ValidateInputs.js  ./src/utilities/ValidateInputs.js
 COPY package.json package-lock.json* ./
 COPY public ./public
 

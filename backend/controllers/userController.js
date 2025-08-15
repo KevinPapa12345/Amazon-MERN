@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import VerificationCode from "../models/VerificationCode.js";
 import { deleteCloudinaryFolder } from "../utility/cloudinaryUtils.js";
 import { sendEmail } from "../config/sendEmail.js";
+import { validateAccountSettings } from "../../src/utilities/ValidateInputs.js";
 
 export const uploadUserIcon = async (req, res) => {
   try {
@@ -123,6 +124,14 @@ export const updateUserProfile = async (req, res) => {
 
     const { username, email, currentPassword } = req.body;
 
+    const { valid, error } = validateAccountSettings({
+      email,
+      username,
+    });
+    if (!valid) {
+      return res.status(400).json({ message: error });
+    }
+
     if (username !== user.username) {
       const existingUsername = await User.findOne({ username });
       if (
@@ -197,15 +206,18 @@ export const sendVerificationCode = async (req, res) => {
 };
 
 export const updateUserPassword = async (req, res) => {
-  const email = req.body.email || req.user?.email;
   const { verificationCode, newPassword } = req.body;
 
-  if (!email || !verificationCode || !newPassword) {
+  const { valid, error } = validateAccountSettings({ newPassword });
+  if (!valid) {
+    return res.status(400).json({ message: error });
+  }
+
+  if (!verificationCode || !newPassword) {
     return res.status(400).json({ error: "Missing fields." });
   }
 
   const codeEntry = await VerificationCode.findOne({
-    email,
     code: verificationCode,
     expiresAt: { $gt: Date.now() },
   });
@@ -213,6 +225,8 @@ export const updateUserPassword = async (req, res) => {
   if (!codeEntry) {
     return res.status(400).json({ error: "Invalid or expired code." });
   }
+
+  const email = codeEntry.email;
 
   const user = await User.findOne({ email });
   if (!user) {

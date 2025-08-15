@@ -1,6 +1,10 @@
 import User from "../models/User.js";
 import { NODE_ENV } from "../config/env.js";
 import generateToken from "../utility/generateToken.js";
+import {
+  validateAccountSettings,
+  validateLoginInputs,
+} from "../../src/utilities/ValidateInputs.js";
 
 export const getUserInfo = async (req, res) => {
   if (!req.user) {
@@ -27,6 +31,16 @@ export const getUserInfo = async (req, res) => {
 
 export const registerUser = async (req, res) => {
   const { email, password, username } = req.body;
+
+  const { valid, error } = validateLoginInputs({
+    email,
+    password,
+    username,
+    action: "Sign up",
+  });
+  if (!valid) {
+    return res.status(400).json({ message: error });
+  }
 
   try {
     const userExists = await User.findOne({
@@ -64,6 +78,15 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
+
+  const { valid, error } = validateAccountSettings({
+    email,
+    password,
+    action: "Login",
+  });
+  if (!valid) {
+    return res.status(400).json({ message: error });
+  }
 
   try {
     const user = await User.findOne({ email }).select("+password");
