@@ -62,6 +62,10 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      if (!localStorage.getItem("loggedIn")) {
+        setLoading(false);
+        return;
+      }
       try {
         const res = await API.get("/auth/me");
         const data = res.data;
@@ -75,7 +79,7 @@ export const UserProvider = ({ children }) => {
         const cartItems = await fetchCart();
         setCartItems(cartItems);
       } catch (err) {
-        if (err.response && err.response.status === 401) {
+        if (err.response?.status === 401) {
           setUser({ username: null, email: null, user_icon: null });
           setCartItems([]);
         } else {
@@ -99,6 +103,7 @@ export const UserProvider = ({ children }) => {
         email: data.email,
         user_icon: data.user_icon || null,
       });
+      localStorage.setItem("loggedIn", "true");
 
       const cartItems = await fetchCart();
       setCartItems(cartItems);
@@ -123,6 +128,7 @@ export const UserProvider = ({ children }) => {
         email: data.email,
         user_icon: data.user_icon || null,
       });
+      localStorage.setItem("loggedIn", "true");
 
       const cartItems = await fetchCart();
       setCartItems(cartItems);
@@ -140,6 +146,7 @@ export const UserProvider = ({ children }) => {
     }
     setUser({ username: null, email: null, user_icon: null });
     setCartItems([]);
+    localStorage.removeItem("loggedIn");
     if (socketRef.current) {
       socketRef.current.disconnect();
       socketRef.current = null;

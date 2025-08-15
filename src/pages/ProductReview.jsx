@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import API from "../services/api";
 import { useUser } from "../context/UserContext";
@@ -32,8 +32,9 @@ const ProductReview = () => {
   const [reloadProduct, setReloadProduct] = useState(false);
   const [selectedRatingFilter, setSelectedRatingFilter] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeImageArray, setActiveImageArray] = useState("images");
+  const navigate = useNavigate();
 
   const startEditing = (review) => {
     setEditingReview(review._id);
@@ -44,7 +45,6 @@ const ProductReview = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        setLoading(true);
         const res = await API.get(`/products/${id}`);
         setProduct(res.data);
         setReviews(res.data.reviews || []);
