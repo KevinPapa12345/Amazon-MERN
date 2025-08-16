@@ -80,8 +80,7 @@ export const UserProvider = ({ children }) => {
         setCartItems(cartItems);
       } catch (err) {
         if (err.response?.status === 401) {
-          setUser({ username: null, email: null, user_icon: null });
-          setCartItems([]);
+          logout();
         } else {
           console.error(err);
         }

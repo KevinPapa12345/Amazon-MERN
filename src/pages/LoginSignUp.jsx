@@ -78,11 +78,9 @@ export const LoginSignUp = () => {
         setError("Please enter the code and a new password.");
         return;
       }
-
       try {
-        const password = newPassword;
         const { valid, error } = validateAccountSettings({
-          password,
+          password: newPassword,
         });
         if (!valid) {
           setError(error);

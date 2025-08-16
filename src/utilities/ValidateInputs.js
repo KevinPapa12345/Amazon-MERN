@@ -20,7 +20,7 @@ export const validateLoginInputs = ({ email, password, username, action }) => {
     return { valid: false, error: "Name is required" };
   }
 
-  if (username.length > 20) {
+  if (username && username.length > 20) {
     return { valid: false, error: "Username must be 20 characters or fewer" };
   }
 
@@ -39,10 +39,8 @@ export const validateAccountSettings = ({ email, username, password }) => {
     return { valid: false, error: "Username must be 20 characters or fewer" };
   }
 
-  if (password) {
-    if (password.length < 6) {
-      return { valid: false, error: "Password must be at least 6 characters" };
-    }
+  if (password && password.length < 6) {
+    return { valid: false, error: "Password must be at least 6 characters" };
   }
 
   return { valid: true };

@@ -49,6 +49,10 @@ const AccountSettings = () => {
 
   const handleSubmitPasswordChange = async (e) => {
     e.preventDefault();
+    if (!verificationCode || !newPassword) {
+      setMessage("Please enter the code and a new password.");
+      return;
+    }
     const { valid, error } = validateAccountSettings({
       newPassword,
     });
@@ -61,7 +65,6 @@ const AccountSettings = () => {
         verificationCode,
         newPassword,
       });
-
       setMessage("Password changed successfully.");
       setShowPasswordChange(false);
       setVerificationCode("");
@@ -74,6 +77,10 @@ const AccountSettings = () => {
 
   const handleSubmitInfo = async (e) => {
     e.preventDefault();
+    if (!email || !username) {
+      setMessage("Missing required fields.");
+      return;
+    }
     const { valid, error } = validateAccountSettings({
       email,
       username,

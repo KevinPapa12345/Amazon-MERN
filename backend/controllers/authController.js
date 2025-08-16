@@ -1,10 +1,7 @@
 import User from "../models/User.js";
 import { NODE_ENV } from "../config/env.js";
 import generateToken from "../utility/generateToken.js";
-import {
-  validateAccountSettings,
-  validateLoginInputs,
-} from "../../src/utilities/ValidateInputs.js";
+import { validateLoginInputs } from "../../src/utilities/ValidateInputs.js";
 
 export const getUserInfo = async (req, res) => {
   if (!req.user) {
@@ -79,7 +76,7 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  const { valid, error } = validateAccountSettings({
+  const { valid, error } = validateLoginInputs({
     email,
     password,
     action: "Login",

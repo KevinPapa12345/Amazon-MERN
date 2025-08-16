@@ -124,12 +124,18 @@ export const updateUserProfile = async (req, res) => {
 
     const { username, email, currentPassword } = req.body;
 
+    if (!username || !email) {
+      return res
+        .status(400)
+        .json({ error: "Username and email are required." });
+    }
+
     const { valid, error } = validateAccountSettings({
       email,
       username,
     });
     if (!valid) {
-      return res.status(400).json({ message: error });
+      return res.status(400).json({ error });
     }
 
     if (username !== user.username) {
@@ -208,13 +214,13 @@ export const sendVerificationCode = async (req, res) => {
 export const updateUserPassword = async (req, res) => {
   const { verificationCode, newPassword } = req.body;
 
+  if (!verificationCode || !newPassword) {
+    return res.status(400).json({ error: "Missing fields." });
+  }
+
   const { valid, error } = validateAccountSettings({ newPassword });
   if (!valid) {
     return res.status(400).json({ message: error });
-  }
-
-  if (!verificationCode || !newPassword) {
-    return res.status(400).json({ error: "Missing fields." });
   }
 
   const codeEntry = await VerificationCode.findOne({
