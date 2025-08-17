@@ -4,7 +4,7 @@ import {
   addProductReview,
   deleteReview,
   editReview,
-  getAllProducts,
+  getProducts,
   getProductById,
   searchProducts,
   uploadProductImages,
@@ -23,7 +23,7 @@ const router = express.Router();
 router.get("/search", searchProducts);
 router.get("/my-products", protect, getMyProducts);
 router.get("/:id", getProductById);
-router.get("/", getAllProducts);
+router.get("/", getProducts);
 
 router.post("/", protect, createProduct);
 router.post(

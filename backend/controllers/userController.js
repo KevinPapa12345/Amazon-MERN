@@ -6,6 +6,7 @@ import VerificationCode from "../models/VerificationCode.js";
 import { deleteCloudinaryFolder } from "../utility/cloudinaryUtils.js";
 import { sendEmail } from "../config/sendEmail.js";
 import { validateAccountSettings } from "../../src/utilities/ValidateInputs.js";
+import mongoose from "mongoose";
 
 export const uploadUserIcon = async (req, res) => {
   try {
@@ -46,37 +47,88 @@ export const uploadUserIcon = async (req, res) => {
 
 export const getSalesForSeller = async (req, res) => {
   try {
-    const sellerId = req.user.id;
+    const sellerId = new mongoose.Types.ObjectId(req.user.id);
+    const { page, limit, search, sort } = req.query;
+    const skip = (page - 1) * limit;
 
-    const orders = await Order.find({
-      "items.product.userId": sellerId,
+    let sortStage = { createdAt: -1 };
+    if (sort === "oldest") sortStage = { createdAt: 1 };
+    else if (sort === "priceLow") sortStage = { "items.product.priceCents": 1 };
+    else if (sort === "priceHigh")
+      sortStage = { "items.product.priceCents": -1 };
+
+    const matchStage = {
+      $match: {
+        "items.product.userId": sellerId,
+      },
+    };
+
+    const projectStage = {
+      $project: {
+        items: 1,
+        user: 1,
+        createdAt: 1,
+      },
+    };
+
+    const unwindStage = { $unwind: "$items" };
+
+    const matchItemsStage = {
+      $match: {
+        "items.product.userId": sellerId,
+        ...(search && {
+          "items.product.name": { $regex: search, $options: "i" },
+        }),
+      },
+    };
+
+    const facetStage = {
+      $facet: {
+        paginatedResults: [
+          { $sort: sortStage },
+          { $skip: parseInt(skip) },
+          { $limit: parseInt(limit) },
+          {
+            $project: {
+              orderId: "$_id",
+              buyerId: "$user",
+              productId: "$items.product._id",
+              productName: "$items.product.name",
+              images: "$items.product.images",
+              variant1Images: "$items.product.variant1Images",
+              variant2Images: "$items.product.variant2Images",
+              variant3Images: "$items.product.variant3Images",
+              quantity: "$items.quantity",
+              priceCents: "$items.product.priceCents",
+              totalCents: {
+                $multiply: ["$items.quantity", "$items.product.priceCents"],
+              },
+              deliveryDate: "$items.deliveryDate",
+              createdAt: "$createdAt",
+            },
+          },
+        ],
+        totalCount: [{ $count: "count" }],
+      },
+    };
+
+    const result = await Order.aggregate([
+      matchStage,
+      projectStage,
+      unwindStage,
+      matchItemsStage,
+      facetStage,
+    ]);
+
+    const sales = result[0].paginatedResults;
+    const totalSales = result[0].totalCount[0]?.count || 0;
+
+    res.status(200).json({
+      sales,
+      page: parseInt(page),
+      totalPages: Math.ceil(totalSales / limit),
+      totalSales,
     });
-
-    const sales = [];
-
-    orders.forEach((order) => {
-      order.items.forEach((item) => {
-        if (item.product.userId.equals(sellerId)) {
-          sales.push({
-            orderId: order._id,
-            buyerId: order.user,
-            productId: item.product._id,
-            productName: item.product.name,
-            images: item.product.images,
-            variant1Images: item.product.variant1Images,
-            variant2Images: item.product.variant2Images,
-            variant3Images: item.product.variant3Images,
-            quantity: item.quantity,
-            priceCents: item.product.priceCents,
-            totalCents: item.quantity * item.product.priceCents,
-            deliveryDate: item.deliveryDate,
-            createdAt: order.createdAt,
-          });
-        }
-      });
-    });
-
-    res.status(200).json({ sales });
   } catch (err) {
     console.error("Failed to get sales for seller:", err);
     res.status(500).json({ error: "Failed to get sales" });

@@ -177,6 +177,80 @@
   gap: 1.5rem;
 }
 
+.my-products-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem auto;
+  width: 100%;
+  gap: 10px;
+}
+
+.my-products-search {
+  flex: 1;
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  cursor: text;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-products-search:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.my-products-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #deeaff;
+  width: 100%;
+}
+
+.my-products-search input::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.my-products-pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.my-products-pagination button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.my-products-pagination button:hover:not(:disabled) {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.my-products-pagination button:disabled {
+  background: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.my-products-pagination span {
+  font-size: 0.95rem;
+  color: #536178;
+}
+
 .my-product-card {
   background: #fff;
   border: 1px solid #ddd;
@@ -381,7 +455,7 @@
   width: 100%;
   margin: 0 auto;
   position: relative;
-  background-color: blanchedalmond;
+  background-color: #1f2937;
   padding-bottom: 18.7vh;
   overflow: hidden;
 }
@@ -398,6 +472,7 @@
 }
 
 .profile-header h1 {
+  color: white;
   font-size: 2rem;
   margin-bottom: 0.5rem;
 }
@@ -502,13 +577,19 @@
   filter: brightness(0.9);
   transition: filter 0.2s ease;
 }
+
 .toggle-button {
   position: absolute;
   top: 60px;
   left: 100px;
 }
+
 .toggle-button label {
   left: 50px;
+}
+
+.toggle-button span {
+  color: white;
 }
 
 .modal-backdrop {
@@ -647,6 +728,7 @@
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
+  margin-bottom: -90px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -654,7 +736,7 @@
   font-size: 2rem;
   margin-bottom: 1.5rem;
   text-align: center;
-  color: #333;
+  color: white;
 }
 
 .sales-list {

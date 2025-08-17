@@ -315,6 +315,39 @@
   margin-right: 5px;
 }
 
+.review-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.7rem;
+  font-size: 0.9rem;
+}
+
+.review-pagination button {
+  background-color: #0073e6;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.review-pagination button:hover:not(:disabled) {
+  background-color: #005bb5;
+}
+
+.review-pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.review-pagination span {
+  font-weight: 500;
+  color: #333;
+}
+
 .review-form {
   display: flex;
   flex-direction: column;

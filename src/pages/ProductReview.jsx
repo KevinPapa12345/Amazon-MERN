@@ -34,6 +34,9 @@ const ProductReview = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [activeImageArray, setActiveImageArray] = useState("images");
+  const [reviewsPage, setReviewsPage] = useState(1);
+  const reviewsTotalPages = useRef(1);
+  const reviewsPerPage = 5;
   const navigate = useNavigate();
 
   const startEditing = (review) => {
@@ -43,11 +46,18 @@ const ProductReview = () => {
   };
 
   useEffect(() => {
+    setReviewsPage(1);
+  }, [selectedRatingFilter]);
+
+  useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await API.get(`/products/${id}`);
-        setProduct(res.data);
-        setReviews(res.data.reviews || []);
+        const res = await API.get(
+          `/products/${id}?includeReviews=true&page=${reviewsPage}&limit=${reviewsPerPage}`
+        );
+        setProduct(res.data.product);
+        setReviews(res.data.product.reviews || []);
+        reviewsTotalPages.current = res.data.reviewsTotalPages || 1;
         setActiveImageArray("images");
         setCurrentImageIndex(0);
       } catch (err) {
@@ -58,7 +68,7 @@ const ProductReview = () => {
     };
 
     fetchProduct();
-  }, [reloadProduct]);
+  }, [reloadProduct, reviewsPage]);
 
   const currentImageArray = getCurrentImageArray(product, activeImageArray);
 
@@ -320,6 +330,29 @@ const ProductReview = () => {
               ))}
           </>
         )}
+      </section>
+      <section className="review-pagination">
+        <button
+          onClick={() => setReviewsPage((prev) => Math.max(prev - 1, 1))}
+          disabled={reviewsPage === 1}
+        >
+          Previous
+        </button>
+
+        <span>
+          Page {reviewsPage} of {reviewsTotalPages.current}
+        </span>
+
+        <button
+          onClick={() =>
+            setReviewsPage((prev) =>
+              Math.min(prev + 1, reviewsTotalPages.current)
+            )
+          }
+          disabled={reviewsPage === reviewsTotalPages.current}
+        >
+          Next
+        </button>
       </section>
 
       {user.username && (
