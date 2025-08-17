@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import API from "../../../services/api";
 import MyProductCard from "./MyProductCard/MyProductCard";
 import ImageUploader from "./ImageUploader";
 import fetchMyProducts from "../../../services/fetchMyProducts";
 import capitalize from "../../../utilities/Capitalize";
+import SearchPaginationControls from "../../UI/SearchPaginationControls";
 
 const ProductDashboard = ({ modalRef }) => {
   const [isCreating, setIsCreating] = useState(true);
   const [productId, setProductId] = useState(null);
   const [myProducts, setMyProducts] = useState([]);
+  const totalProducts = useRef(0);
   const [formData, setFormData] = useState({
     name: "",
     priceCents: 0,
@@ -19,14 +21,14 @@ const ProductDashboard = ({ modalRef }) => {
     keywords: "",
   });
 
-  const loadProducts = async () => {
-    const data = await fetchMyProducts();
-    setMyProducts(data);
+  const loadProducts = async (pageNum, searchQuery, sortBy) => {
+    const data = await fetchMyProducts(pageNum, 12, searchQuery, sortBy);
+    setMyProducts(data.products || []);
+    totalProducts.current = data.totalProducts || 0;
+    return {
+      totalPages: data.totalPages || 1,
+    };
   };
-
-  useEffect(() => {
-    loadProducts();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -183,12 +185,17 @@ const ProductDashboard = ({ modalRef }) => {
           />
         )}
       </article>
-      <h2 className="my-products-title">Your Products</h2>
+      <h2 className="my-products-title">
+        {totalProducts.current} Product Results
+      </h2>
+      <SearchPaginationControls
+        onFetchData={loadProducts}
+        searchPlaceholder="Search products by name..."
+      />
       {myProducts.length === 0 && (
         <p className="no-products">No products yet.</p>
       )}
-
-      <div className="my-products-grid">
+      <article className="my-products-grid">
         {myProducts.map((product) => (
           <MyProductCard
             key={product._id}
@@ -201,7 +208,7 @@ const ProductDashboard = ({ modalRef }) => {
             modalRef={modalRef}
           />
         ))}
-      </div>
+      </article>
     </>
   );
 };

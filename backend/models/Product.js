@@ -1,12 +1,6 @@
 import mongoose from "mongoose";
 import { io, socketMap } from "../server.js";
-
-export const imageSchema = {
-  url: { type: String, required: true },
-  publicId: { type: String, required: true },
-  originalName: { type: String },
-  size: { type: Number },
-};
+import { imageSchema } from "../schemas/imageSchema.js";
 
 const ProductSchema = new mongoose.Schema(
   {
@@ -66,6 +60,7 @@ const ProductSchema = new mongoose.Schema(
       },
     },
     status: { type: String, default: "pending" },
+    seeded: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
   },
   {

@@ -19,7 +19,7 @@ const MyProductCard = ({
   const handleEdit = async () => {
     try {
       const res = await API.get(`/products/${product._id}`);
-      const fullProduct = res.data;
+      const fullProduct = res.data.product;
 
       setFormData({
         name: fullProduct.name,

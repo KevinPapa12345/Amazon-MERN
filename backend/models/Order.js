@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { imageSchema } from "./Product.js";
+import { imageSchema } from "../schemas/imageSchema.js";
 
 const orderSchema = new mongoose.Schema(
   {

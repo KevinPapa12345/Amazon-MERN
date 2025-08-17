@@ -4,7 +4,7 @@ import { recalculateProductRating } from "../utility/recalculateRating.js";
 import cloudinary from "../config/cloudinary.js";
 import { deleteCloudinaryFolder } from "../utility/cloudinaryUtils.js";
 
-export const getAllProducts = async (req, res) => {
+export const getProducts = async (req, res) => {
   const page = parseInt(req.query.page);
   const limit = parseInt(req.query.limit);
   const skip = (page - 1) * limit;
@@ -58,21 +58,82 @@ export const getAllProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id)
-      .populate({
-        path: "userId",
-        select: "username",
-      })
-      .populate({
+    const { page, limit, includeReviews } = req.query;
+    const skip = (page - 1) * limit;
+
+    let query = Product.findById(req.params.id).populate({
+      path: "userId",
+      select: "username",
+    });
+
+    if (includeReviews === "true") {
+      query = query.populate({
         path: "reviews",
+        options: {
+          skip: parseInt(skip),
+          limit: parseInt(limit),
+          sort: { createdAt: -1 },
+        },
         populate: {
           path: "userId",
           select: "username",
         },
       });
+    }
+
+    const product = await query;
+
     if (!product) return res.status(404).json({ message: "Product not found" });
-    res.json(product);
+
+    let totalReviews = 0;
+    if (includeReviews === "true") {
+      totalReviews = await Review.countDocuments({ product: product._id });
+    }
+
+    res.json({
+      product,
+      ...(includeReviews === "true" && {
+        reviewsPage: parseInt(page),
+        reviewsTotalPages: Math.ceil(totalReviews / limit),
+      }),
+    });
   } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getMyProducts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { page, limit, search, sort } = req.query;
+    const skip = (page - 1) * limit;
+
+    const filter = { userId };
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    let sortStage = { createdAt: -1 };
+    if (sort === "oldest") sortStage = { createdAt: 1 };
+    else if (sort === "priceLow") sortStage = { priceCents: 1 };
+    else if (sort === "priceHigh") sortStage = { priceCents: -1 };
+
+    const products = await Product.find(filter)
+      .sort(sortStage)
+      .skip(parseInt(skip))
+      .limit(parseInt(limit));
+
+    const totalProducts = await Product.countDocuments(filter);
+
+    res.status(200).json({
+      products,
+      page: parseInt(page),
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
+    });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -103,16 +164,6 @@ export const createProduct = async (req, res) => {
     res.status(201).json({ message: "Product created", product: newProduct });
   } catch (error) {
     console.error("Product creation error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-export const getMyProducts = async (req, res) => {
-  try {
-    const products = await Product.find({ userId: req.user.id });
-    res.status(200).json({ products });
-  } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 };
