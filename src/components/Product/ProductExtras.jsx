@@ -1,4 +1,5 @@
 const ProductExtras = ({ keywords }) => {
+  const normalizedKeywords = keywords.map((k) => k.toLowerCase());
   const isClothing = [
     "socks",
     "tshirts",
@@ -19,7 +20,7 @@ const ProductExtras = ({ keywords }) => {
     "beanies",
     "toques",
     "winter hats",
-  ].some((keyword) => keywords.includes(keyword));
+  ].some((keyword) => normalizedKeywords.includes(keyword));
 
   const isAppliance = [
     "appliances",
@@ -30,7 +31,8 @@ const ProductExtras = ({ keywords }) => {
     "water boiler",
     "coffeemakers",
     "food blenders",
-  ].some((keyword) => keywords.includes(keyword));
+    "Cookware",
+  ].some((keyword) => normalizedKeywords.includes(keyword));
 
   return (
     <section>

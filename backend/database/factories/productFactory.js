@@ -12,7 +12,10 @@ export const createProduct = async () => {
     name: faker.commerce.productName(),
     images: [
       {
-        url: `https://picsum.photos/seed/${faker.string.uuid()}/250/250`,
+        url: faker.image.urlPicsumPhotos({
+          width: 250,
+          height: 250,
+        }),
         publicId: faker.string.uuid(),
         originalName: faker.system.fileName(),
         size: faker.number.int({ min: 5000, max: 5000000 }),
