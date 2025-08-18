@@ -72,11 +72,13 @@ export const placeOrderForUser = async (userId) => {
 
   await order.save();
   await CartItem.deleteMany({ user: userId });
-  await sendEmail(
+  sendEmail(
     user.email,
     `Your order #${order._id} is confirmed`,
     generateOrderConfirmationEmail(order)
-  );
+  ).catch((err) => {
+    console.error("Failed to send confirmation email:", err);
+  });
 
   return order;
 };
