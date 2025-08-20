@@ -1,5 +1,6 @@
 import express from "express";
 import { protect } from "../middleware/auth.js";
+import { guest } from "../middleware/guest.js";
 import {
   getUserInfo,
   loginUser,
@@ -14,10 +15,10 @@ import {
 const router = express.Router();
 
 router.get("/me", protect, getUserInfo);
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.post("/logout", logoutUser);
-router.post("/send-verification-code", sendVerificationCode);
-router.post("/update-password", updateUserPassword);
+router.post("/register", guest, registerUser);
+router.post("/login", guest, loginUser);
+router.post("/send-verification-code", guest, sendVerificationCode);
+router.post("/update-password", guest, updateUserPassword);
+router.post("/logout", protect, logoutUser);
 
 export default router;
